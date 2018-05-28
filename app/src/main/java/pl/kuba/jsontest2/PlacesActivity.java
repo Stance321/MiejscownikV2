@@ -3,7 +3,9 @@ package pl.kuba.jsontest2;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,7 +20,10 @@ import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.RankBy;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -29,8 +34,9 @@ import static com.google.maps.model.PlaceType.RESTAURANT;
 public class PlacesActivity extends AppCompatActivity {
 
     GeoApiContext geoApiContext;
-    List<Place> places;
+    ArrayList<Place> places;
     ListView mListViewPlaces;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,130 +45,8 @@ public class PlacesActivity extends AppCompatActivity {
 
         mListViewPlaces = (ListView) findViewById(R.id.listViewPlaces);
 
-        places = new List<Place>() {
-            @Override
-            public int size() {
-                return 0;
-            }
 
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public boolean contains(Object o) {
-                return false;
-            }
-
-            @NonNull
-            @Override
-            public Iterator<Place> iterator() {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public Object[] toArray() {
-                return new Object[0];
-            }
-
-            @NonNull
-            @Override
-            public <T> T[] toArray(@NonNull T[] ts) {
-                return null;
-            }
-
-            @Override
-            public boolean add(Place place) {
-                return false;
-            }
-
-            @Override
-            public boolean remove(Object o) {
-                return false;
-            }
-
-            @Override
-            public boolean containsAll(@NonNull Collection<?> collection) {
-                return false;
-            }
-
-            @Override
-            public boolean addAll(@NonNull Collection<? extends Place> collection) {
-                return false;
-            }
-
-            @Override
-            public boolean addAll(int i, @NonNull Collection<? extends Place> collection) {
-                return false;
-            }
-
-            @Override
-            public boolean removeAll(@NonNull Collection<?> collection) {
-                return false;
-            }
-
-            @Override
-            public boolean retainAll(@NonNull Collection<?> collection) {
-                return false;
-            }
-
-            @Override
-            public void clear() {
-
-            }
-
-            @Override
-            public Place get(int i) {
-                return null;
-            }
-
-            @Override
-            public Place set(int i, Place place) {
-                return null;
-            }
-
-            @Override
-            public void add(int i, Place place) {
-
-            }
-
-            @Override
-            public Place remove(int i) {
-                return null;
-            }
-
-            @Override
-            public int indexOf(Object o) {
-                return 0;
-            }
-
-            @Override
-            public int lastIndexOf(Object o) {
-                return 0;
-            }
-
-            @NonNull
-            @Override
-            public ListIterator<Place> listIterator() {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public ListIterator<Place> listIterator(int i) {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public List<Place> subList(int i, int i1) {
-                return null;
-            }
-        };
-
-
+        places = new ArrayList<Place>();
         geoApiContext = new GeoApiContext.Builder()
                 .apiKey("AIzaSyBAq6om8Nx7HL_DXFHWCE572HgSWIg3giU")
                 .build();
@@ -200,6 +84,7 @@ public class PlacesActivity extends AppCompatActivity {
                         }
 
                     }
+                    System.out.println(places.get(1).getName());
                     refreshLayout();
 
                 }
@@ -209,15 +94,22 @@ public class PlacesActivity extends AppCompatActivity {
                     System.out.println(e.toString());
                 }
             });
-            mListViewPlaces.setAdapter(new PlacesAdapter(getApplicationContext(), places));
 
 
             //Gson lokalizacje = new GsonBuilder().setPrettyPrinting().create();
 
            }
 
+
            public void refreshLayout() {
-               mListViewPlaces.invalidate();
+               runOnUiThread(new Runnable(){
+                   @Override
+                   public void run() {
+                       mListViewPlaces.setAdapter(new PlacesAdapter(getApplicationContext(), places));
+
+                       mListViewPlaces.invalidate();
+                   }
+               });
            }
     }
 
