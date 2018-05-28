@@ -9,7 +9,7 @@ android:layout_height="wrap_content" >
         android:layout_height="match_parent"
         android:text="@+id/label"
         android:textColor="@android:color/black"
-        android:textSize="10sp">
+        android:textSize="20sp">
 
     </TextView>
 

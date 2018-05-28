@@ -1,10 +1,13 @@
 package pl.kuba.jsontest2;
 
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -36,15 +39,41 @@ public class PlacesActivity extends AppCompatActivity {
     GeoApiContext geoApiContext;
     ArrayList<Place> places;
     ListView mListViewPlaces;
+    int maxDistance = 6000;
+    SeekBar sbDistance;
+    TextView tvMeters;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_places);
 
         mListViewPlaces = (ListView) findViewById(R.id.listViewPlaces);
+        sbDistance = (SeekBar) findViewById(R.id.sbDistance);
+        tvMeters = (TextView) findViewById(R.id.tvMeters);
 
+        sbDistance.setMax(maxDistance);
+//        sbDistance.setMin(100);
+
+        sbDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                System.out.println(i);
+                tvMeters.setText(i + " meters");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         places = new ArrayList<Place>();
         geoApiContext = new GeoApiContext.Builder()
@@ -60,7 +89,7 @@ public class PlacesActivity extends AppCompatActivity {
 
             NearbySearchRequest nerby = new NearbySearchRequest(geoApiContext);
 
-            nerby.radius(1500);
+            nerby.radius(maxDistance);
             nerby.rankby(RankBy.PROMINENCE);
             nerby.type(PlaceType.RESTAURANT);
             nerby.location(currentLocation);
