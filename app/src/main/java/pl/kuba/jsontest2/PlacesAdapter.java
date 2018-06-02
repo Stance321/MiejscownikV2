@@ -20,12 +20,14 @@ public class PlacesAdapter extends ArrayAdapter<Place> {
 
     private Context context;
     private List<Place> values;
+    private int selectedDistance;
 
-    public PlacesAdapter(Context context, List<Place> values) {
+    public PlacesAdapter(Context context, List<Place> values, int selectedDistance) {
         super(context, R.layout.rowofplace, values);
 
         this.context = context;
         this.values = values;
+        this.selectedDistance = selectedDistance;
     }
 
     @Override
@@ -38,11 +40,17 @@ public class PlacesAdapter extends ArrayAdapter<Place> {
             row = inflater.inflate(R.layout.rowofplace, parent, false);
         }
 
-        TextView textView = (TextView) row.findViewById(R.id.rowPlaceName);
+        TextView rowPlaceName = (TextView) row.findViewById(R.id.rowPlaceName);
+        TextView rowPlaceDistance = (TextView) row.findViewById(R.id.rowPlaceDisance);
 
         Place item = values.get(position);
-        String message = item.getName();
-        textView.setText(message);
+        if(selectedDistance >= item.getDistance()) {
+
+            rowPlaceName.setText(item.getName());
+            Double a = new Double(item.getDistance());
+
+            rowPlaceDistance.setText(String.valueOf(a.intValue()) + " meters");
+        }
 
         return row;
     }

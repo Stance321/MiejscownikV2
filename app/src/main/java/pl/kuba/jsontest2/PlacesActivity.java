@@ -28,6 +28,8 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -43,6 +45,22 @@ public class PlacesActivity extends AppCompatActivity {
     SeekBar sbDistance;
     TextView tvMeters;
 
+    public static double distance(double lat1, double lat2, double lon1,
+                                  double lon2) {
+
+        final int R = 6371; // Radius of the earth
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+
+
+        return distance;
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -56,12 +74,15 @@ public class PlacesActivity extends AppCompatActivity {
 
         sbDistance.setMax(maxDistance);
 //        sbDistance.setMin(100);
+        sbDistance.setProgress(3000);
 
         sbDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 System.out.println(i);
                 tvMeters.setText(i + " meters");
+                refreshLayout();
+
             }
 
             @Override
@@ -83,78 +104,74 @@ public class PlacesActivity extends AppCompatActivity {
         final LatLng currentLocation = new LatLng(51.107885, 17.038538);
 
 
-
-            PlacesSearchResponse placesResponse;
-
-
-            NearbySearchRequest nerby = new NearbySearchRequest(geoApiContext);
-
-            nerby.radius(maxDistance);
-            nerby.rankby(RankBy.PROMINENCE);
-            nerby.type(PlaceType.RESTAURANT);
-            nerby.location(currentLocation);
+        PlacesSearchResponse placesResponse;
 
 
-            nerby.setCallback(new PendingResult.Callback<PlacesSearchResponse>() {
-                @Override
-                public void onResult(PlacesSearchResponse result) {
-                    if (result.results.length > 9) {
-                        for (int i = 0; i < 9; i++) {
+        NearbySearchRequest nerby = new NearbySearchRequest(geoApiContext);
 
-                            System.out.println(result.results[i].name + ": " + result.results[i].vicinity);
-                            double distanceinMeters = distance(result.results[i].geometry.location.lat, currentLocation.lat, result.results[i].geometry.location.lng, currentLocation.lng );
-                            places.add(new Place(result.results[i].name,
-                                    result.results[i].geometry.location,
-                                    result.results[i].rating,
-                                    result.results[i].vicinity,
-                                    result.results[i].openingHours,
-                                    result.results[i].placeId,
-                                    distanceinMeters));
+        nerby.radius(maxDistance);
+        nerby.rankby(RankBy.PROMINENCE);
+        nerby.type(PlaceType.RESTAURANT);
+        nerby.location(currentLocation);
 
-                        }
+
+        nerby.setCallback(new PendingResult.Callback<PlacesSearchResponse>() {
+            @Override
+            public void onResult(PlacesSearchResponse result) {
+                if (result.results.length > 9) {
+                    for (int i = 0; i < result.results.length; i++) {
+
+                        double distanceinMeters = distance(result.results[i].geometry.location.lat,
+                                currentLocation.lat,
+                                result.results[i].geometry.location.lng,
+                                currentLocation.lng);
+
+                        places.add(new Place(result.results[i].name,
+                                result.results[i].geometry.location,
+                                result.results[i].rating,
+                                result.results[i].vicinity,
+                                result.results[i].openingHours,
+                                result.results[i].placeId,
+                                distanceinMeters));
 
                     }
-                    System.out.println(places.get(1).getName());
-                    refreshLayout();
 
                 }
+                Collections.sort(places, new Comparator<Place>() {
+                    @Override
+                    public int compare(Place place, Place t1) {
+                        if(place.getDistance() == t1.getDistance())
+                            return 0;
+                        return place.getDistance() < t1.getDistance() ? -1 : 1;
+                    }
+                });
 
-                @Override
-                public void onFailure(Throwable e) {
-                    System.out.println(e.toString());
+                System.out.println(places.get(1).getName());
+                refreshLayout();
+                for (int i = 0; i < places.size(); i++) {
+                    System.out.println("name " + places.get(i).getName() + ", distance " + places.get(i).getDistance());
                 }
-            });
+            }
 
+            @Override
+            public void onFailure(Throwable e) {
+                System.out.println(e.toString());
+            }
+        });
 
-            //Gson lokalizacje = new GsonBuilder().setPrettyPrinting().create();
+        //Gson lokalizacje = new GsonBuilder().setPrettyPrinting().create();
 
-           }
-
-    public static double distance(double lat1, double lat2, double lon1,
-                                  double lon2) {
-
-        final int R = 6371; // Radius of the earth
-
-        double latDistance = Math.toRadians(lat2 - lat1);
-        double lonDistance = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
-
-
-        return distance;
     }
-           public void refreshLayout() {
-               runOnUiThread(new Runnable(){
-                   @Override
-                   public void run() {
-                       mListViewPlaces.setAdapter(new PlacesAdapter(getApplicationContext(), places));
 
-                       mListViewPlaces.invalidate();
-                   }
-               });
-           }
+    public void refreshLayout() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mListViewPlaces.setAdapter(new PlacesAdapter(getApplicationContext(), places, sbDistance.getProgress()));
+
+                mListViewPlaces.invalidate();
+            }
+        });
     }
+}
 

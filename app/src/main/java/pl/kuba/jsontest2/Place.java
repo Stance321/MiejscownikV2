@@ -17,6 +17,8 @@ public class Place {
     private String address; //chodzi o vicinity
     private OpeningHours openingHours;
     private String id;
+
+
     private double distance;
 
     public Place(String name, LatLng latlng, float rating, String address, OpeningHours openingHours, String id, double distance) {
@@ -26,8 +28,12 @@ public class Place {
         this.address = address;
         this.openingHours = openingHours;
         this.id = id;
+        this.distance = distance;
     }
 
+    public double getDistance() {
+        return distance;
+    }
     public String getName() {
         return name;
     }
