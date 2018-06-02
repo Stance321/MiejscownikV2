@@ -80,7 +80,7 @@ public class PlacesActivity extends AppCompatActivity {
                 .apiKey("AIzaSyBAq6om8Nx7HL_DXFHWCE572HgSWIg3giU")
                 .build();
 
-        LatLng currentLocation = new LatLng(51.107885, 17.038538);
+        final LatLng currentLocation = new LatLng(51.107885, 17.038538);
 
 
 
@@ -102,13 +102,14 @@ public class PlacesActivity extends AppCompatActivity {
                         for (int i = 0; i < 9; i++) {
 
                             System.out.println(result.results[i].name + ": " + result.results[i].vicinity);
-
+                            double distanceinMeters = distance(result.results[i].geometry.location.lat, currentLocation.lat, result.results[i].geometry.location.lng, currentLocation.lng );
                             places.add(new Place(result.results[i].name,
                                     result.results[i].geometry.location,
                                     result.results[i].rating,
                                     result.results[i].vicinity,
                                     result.results[i].openingHours,
-                                    result.results[i].placeId));
+                                    result.results[i].placeId,
+                                    distanceinMeters));
 
                         }
 
@@ -129,7 +130,22 @@ public class PlacesActivity extends AppCompatActivity {
 
            }
 
+    public static double distance(double lat1, double lat2, double lon1,
+                                  double lon2) {
 
+        final int R = 6371; // Radius of the earth
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+
+
+        return distance;
+    }
            public void refreshLayout() {
                runOnUiThread(new Runnable(){
                    @Override
