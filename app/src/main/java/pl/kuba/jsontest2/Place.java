@@ -18,15 +18,22 @@ public class Place {
     private OpeningHours openingHours;
     private String id;
 
-    public Place(String name, LatLng latlng, float rating, String address, OpeningHours openingHours, String id) {
+
+    private double distance;
+
+    public Place(String name, LatLng latlng, float rating, String address, OpeningHours openingHours, String id, double distance) {
         this.name = name;
         this.latlng = latlng;
         this.rating = rating;
         this.address = address;
         this.openingHours = openingHours;
         this.id = id;
+        this.distance = distance;
     }
 
+    public double getDistance() {
+        return distance;
+    }
     public String getName() {
         return name;
     }
@@ -75,4 +82,8 @@ public class Place {
     public void setId(String id) {
         this.id = id;
     }
+
+
+
+
 }
