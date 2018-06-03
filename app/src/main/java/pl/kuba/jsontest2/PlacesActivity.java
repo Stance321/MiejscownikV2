@@ -39,11 +39,12 @@ import static com.google.maps.model.PlaceType.RESTAURANT;
 public class PlacesActivity extends AppCompatActivity {
 
     GeoApiContext geoApiContext;
-    ArrayList<Place> places;
-    ListView mListViewPlaces;
+    ArrayList<Place> places = null;
+    ListView mListViewPlaces = null;
     int maxDistance = 6000;
     SeekBar sbDistance;
     TextView tvMeters;
+
 
     public static double distance(double lat1, double lat2, double lon1,
                                   double lon2) {
@@ -72,9 +73,12 @@ public class PlacesActivity extends AppCompatActivity {
         sbDistance = (SeekBar) findViewById(R.id.sbDistance);
         tvMeters = (TextView) findViewById(R.id.tvMeters);
 
+
+
         sbDistance.setMax(maxDistance);
 //        sbDistance.setMin(100);
         sbDistance.setProgress(3000);
+
 
         sbDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
