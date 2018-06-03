@@ -139,7 +139,7 @@ public class PlacesActivity extends AppCompatActivity {
                                 result.results[i].openingHours,
                                 result.results[i].placeId,
                                 distanceinMeters));
-
+ 
                     }
 
                 }
