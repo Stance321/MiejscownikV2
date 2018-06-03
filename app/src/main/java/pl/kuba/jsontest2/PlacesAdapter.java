@@ -5,28 +5,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by jakub on 25.05.18.
  */
 
-public class PlacesAdapter extends ArrayAdapter<Place> {
+public class PlacesAdapter extends ArrayAdapter<Place> implements Filterable {
 
     private Context context;
-    private List<Place> values;
+    private List<Place> allPlaces;
+    private List<Place> filteredPlaces;
     private int selectedDistance;
 
     public PlacesAdapter(Context context, List<Place> values, int selectedDistance) {
         super(context, R.layout.rowofplace, values);
 
         this.context = context;
-        this.values = values;
+        this.allPlaces = values;
+        this.filteredPlaces = values;
+
         this.selectedDistance = selectedDistance;
     }
 
@@ -43,7 +49,7 @@ public class PlacesAdapter extends ArrayAdapter<Place> {
         TextView rowPlaceName = (TextView) row.findViewById(R.id.rowPlaceName);
         TextView rowPlaceDistance = (TextView) row.findViewById(R.id.rowPlaceDisance);
 
-        Place item = values.get(position);
+        Place item = allPlaces.get(position);
         if(selectedDistance >= item.getDistance()) {
 
             rowPlaceName.setText(item.getName());
@@ -55,4 +61,20 @@ public class PlacesAdapter extends ArrayAdapter<Place> {
         return row;
     }
 
+
+    private class ItemFilter extends Filter{
+
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            Integer a = new Integer(Integer.parseInt(charSequence.toString()));
+
+            return null;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            filteredPlaces = (ArrayList<Place>) filterResults.values;
+
+        }
+    }
 }
