@@ -1,9 +1,16 @@
 package pl.kuba.jsontest2;
 
+import android.app.AlertDialog;
+import android.app.Fragment;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -37,6 +44,8 @@ public class PlacesActivity extends AppCompatActivity {
     ArrayList<Place> places;
     ListView mListViewPlaces;
 
+    AlertDialog.Builder infoPopup;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +54,7 @@ public class PlacesActivity extends AppCompatActivity {
 
         mListViewPlaces = (ListView) findViewById(R.id.listViewPlaces);
 
+        infoPopup = new AlertDialog.Builder(this);
 
         places = new ArrayList<Place>();
         geoApiContext = new GeoApiContext.Builder()
@@ -55,7 +65,7 @@ public class PlacesActivity extends AppCompatActivity {
 
 
 
-            PlacesSearchResponse placesResponse;
+            final PlacesSearchResponse placesResponse;
 
 
             NearbySearchRequest nerby = new NearbySearchRequest(geoApiContext);
@@ -87,6 +97,8 @@ public class PlacesActivity extends AppCompatActivity {
                     System.out.println(places.get(1).getName());
                     refreshLayout();
 
+
+
                 }
 
                 @Override
@@ -95,9 +107,28 @@ public class PlacesActivity extends AppCompatActivity {
                 }
             });
 
-
             //Gson lokalizacje = new GsonBuilder().setPrettyPrinting().create();
 
+                mListViewPlaces.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                        ListAdapter la = new DetailsPopupAdapter(getApplicationContext(), places);
+
+
+                       infoPopup.setAdapter(la, new DialogInterface.OnClickListener() {
+                           @Override
+                           public void onClick(DialogInterface dialogInterface, int i) {
+
+                           }
+
+                       });
+                        AlertDialog infoDialog = infoPopup.create();
+                        infoDialog.show();
+                        //setAdapter(new DetailsPopupAdapter(getApplicationContext(), places));
+                    }
+                });
            }
 
 
@@ -108,6 +139,7 @@ public class PlacesActivity extends AppCompatActivity {
                        mListViewPlaces.setAdapter(new PlacesAdapter(getApplicationContext(), places));
 
                        mListViewPlaces.invalidate();
+
                    }
                });
            }
