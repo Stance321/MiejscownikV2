@@ -81,6 +81,8 @@ public class PlacesActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 System.out.println(i);
                 tvMeters.setText(i + " meters");
+               PlacesAdapter adapter = (PlacesAdapter) mListViewPlaces.getAdapter();
+                adapter.getFilter().filter(String.valueOf(i));
                 refreshLayout();
 
             }
