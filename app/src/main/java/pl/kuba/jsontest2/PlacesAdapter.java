@@ -22,7 +22,7 @@ public class PlacesAdapter extends ArrayAdapter<Place> {
     private Context context;
     private List<Place> values;
 
-    public PlacesAdapter(Context context, List<Place> values) {
+    public PlacesAdapter(Context context, List<Place> values, int progress) {
         super(context, R.layout.rowofplace, values);
 
         this.context = context;

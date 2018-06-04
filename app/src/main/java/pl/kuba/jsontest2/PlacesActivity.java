@@ -3,9 +3,14 @@ package pl.kuba.jsontest2;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -44,6 +49,7 @@ public class PlacesActivity extends AppCompatActivity {
     int maxDistance = 6000;
     SeekBar sbDistance;
     TextView tvMeters;
+    AlertDialog.Builder dialogBuilder;
 
 
     public static double distance(double lat1, double lat2, double lon1,
@@ -73,11 +79,23 @@ public class PlacesActivity extends AppCompatActivity {
         sbDistance = (SeekBar) findViewById(R.id.sbDistance);
         tvMeters = (TextView) findViewById(R.id.tvMeters);
 
+        LayoutInflater inflater = getLayoutInflater();
+        final View alertLayout = inflater.inflate(R.layout.place_details_layout, null);
+
+         TextView placeNameView = findViewById(R.id.PlaceNameView);
+         TextView raitingView = findViewById(R.id.RaitingView);
+         EditText openingHoursView = findViewById(R.id.OpeningHoursView);
+
+
+
+        dialogBuilder = new AlertDialog.Builder(this);
 
 
         sbDistance.setMax(maxDistance);
 //        sbDistance.setMin(100);
         sbDistance.setProgress(3000);
+
+
 
 
         sbDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -143,6 +161,21 @@ public class PlacesActivity extends AppCompatActivity {
                     }
 
                 }
+
+
+                mListViewPlaces.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        dialogBuilder.setView(alertLayout);
+                        placeNameView.setText(places.get(i).getName());
+                        //raitingView.setText("" + places.get(i).getRating());
+
+                        AlertDialog detailsPopup = dialogBuilder.create();
+                        detailsPopup.show();
+                    }
+                });
+
+
                 Collections.sort(places, new Comparator<Place>() {
                     @Override
                     public int compare(Place place, Place t1) {
@@ -167,7 +200,9 @@ public class PlacesActivity extends AppCompatActivity {
 
         //Gson lokalizacje = new GsonBuilder().setPrettyPrinting().create();
 
+
     }
+
 
     public void refreshLayout() {
         runOnUiThread(new Runnable() {
