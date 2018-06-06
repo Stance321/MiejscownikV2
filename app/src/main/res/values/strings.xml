@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">JSONtest2</string>
     <string name="title_activity_places">PlacesActivity</string>
+    <string name="zamkniete" color= "@android:color/holo_red_dark">zamknięte</string>
+    <string name="otwarte" color= "@android:color/holo_green_light">otwarte</string>
 </resources>

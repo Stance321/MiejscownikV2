@@ -7,23 +7,44 @@
     <TextView
         android:id="@+id/PlaceNameView"
         android:layout_width="match_parent"
-        android:layout_height="155dp"
+        android:layout_height="104dp"
         android:layout_weight="1"
-        android:text="PlaceName" />
+        android:gravity="center"
+        android:text="PlaceName"
+        android:textSize="30dp"
+        android:textStyle="italic|bold"/>
 
-    <EditText
+    <TextView
+        android:id="@+id/AddressView"
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:text="PlaceAddress" />
+
+    <TextView
         android:id="@+id/OpeningHoursView"
         android:layout_width="match_parent"
-        android:layout_height="161dp"
+        android:layout_height="56dp"
         android:layout_weight="1"
-        android:ems="10"
-        android:inputType="time" />
+        android:gravity="center"
+        android:text="OpeningHours" />
+
+    <TextView
+        android:id="@+id/IsOpenNowView"
+        android:layout_width="match_parent"
+        android:layout_height="49dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="IsOpenNow" />
 
     <TextView
         android:id="@+id/RaitingView"
         android:layout_width="match_parent"
-        android:layout_height="176dp"
+        android:layout_height="338dp"
         android:layout_weight="1"
-        android:text="TextView" />
+        android:gravity="center"
+        android:text="Raiting" />
+
 
 </LinearLayout>

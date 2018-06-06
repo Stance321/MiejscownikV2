@@ -1,5 +1,6 @@
 package pl.kuba.jsontest2;
 
+import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -20,10 +21,12 @@ import com.google.gson.GsonBuilder;
 import com.google.maps.GeoApiContext;
 import com.google.maps.NearbySearchRequest;
 import com.google.maps.PendingResult;
+import com.google.maps.PlaceDetailsRequest;
 import com.google.maps.PlacesApi;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.LatLng;
 import com.google.maps.model.PlaceAutocompleteType;
+import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.RankBy;
@@ -82,9 +85,15 @@ public class PlacesActivity extends AppCompatActivity {
         LayoutInflater inflater = getLayoutInflater();
         final View alertLayout = inflater.inflate(R.layout.place_details_layout, null);
 
-         TextView placeNameView = findViewById(R.id.PlaceNameView);
-         TextView raitingView = findViewById(R.id.RaitingView);
-         EditText openingHoursView = findViewById(R.id.OpeningHoursView);
+        final TextView placeNameView = (TextView) alertLayout.findViewById(R.id.PlaceNameView);
+        final TextView placeAddressView = (TextView) alertLayout.findViewById(R.id.AddressView);
+        final TextView openingHoursView = (TextView) alertLayout.findViewById(R.id.OpeningHoursView);
+        final TextView isOpenNowView = (TextView) alertLayout.findViewById(R.id.IsOpenNowView);
+        final TextView raitingView = (TextView) alertLayout.findViewById(R.id.RaitingView);
+
+         //EditText openingHoursView = (EditText)alertLayout.findViewById(R.id.OpeningHoursView);
+
+
 
 
 
@@ -156,22 +165,55 @@ public class PlacesActivity extends AppCompatActivity {
                                 result.results[i].vicinity,
                                 result.results[i].openingHours,
                                 result.results[i].placeId,
+                                //result.results[i].openingHours.periods,
                                 distanceinMeters));
- 
+
                     }
 
                 }
 
 
+
                 mListViewPlaces.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
+
+                        PlaceDetailsRequest placeDetails = new PlaceDetailsRequest(geoApiContext);
+                        placeDetails.placeId(places.get(i).getId());
+
+                        placeDetails.setCallback(new PendingResult.Callback<PlaceDetails>() {
+                            @Override
+                            public void onResult(PlaceDetails result) {
+                                places.get(i).setOpeningHours(result.openingHours);
+                            }
+
+                            @Override
+                            public void onFailure(Throwable e) {
+
+                            }
+                        });
+
                         dialogBuilder.setView(alertLayout);
+
                         placeNameView.setText(places.get(i).getName());
-                        //raitingView.setText("" + places.get(i).getRating());
+                        placeAddressView.setText("("+places.get(i).getAddress()+")");
+                        //openingHoursView.setText(""+places.get(i).getOpeningHours().periods[0]);
+                        raitingView.setText("Ocena miejsca: " + places.get(i).getRating()+"/5");
+
+                        if(!places.get(i).getOpeningHours().openNow ) {
+
+                            isOpenNowView.setTextColor(Color.RED);
+                            isOpenNowView.setText("Obecnie zamknięte");
+                        }
+                        else {
+                            isOpenNowView.setTextColor(Color.GREEN);
+                            isOpenNowView.setText("Obecnie otwarte");
+                        }
+
 
                         AlertDialog detailsPopup = dialogBuilder.create();
                         detailsPopup.show();
+
                     }
                 });
 
