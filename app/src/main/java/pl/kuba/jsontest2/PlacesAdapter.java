@@ -75,7 +75,7 @@ public class PlacesAdapter extends ArrayAdapter implements Filterable {
         rowPlaceDistance.setText(String.valueOf(new Double(
                 filteredPlaces.get(position)
                 .getDistance()).intValue())
-                + " meters");
+                + " meters ");
         return row;
     }
 
