@@ -1,9 +1,16 @@
 package pl.kuba.jsontest2;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+
 import com.google.maps.model.LatLng;
 import com.google.maps.model.OpeningHours;
+import com.google.maps.model.Photo;
 import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlacesSearchResponse;
+
+import java.net.URL;
 
 /**
  * Created by jakub on 25.05.18.
@@ -17,9 +24,13 @@ public class Place {
     private String address; //chodzi o vicinity
     private OpeningHours openingHours;
     private String id;
-
-
     private double distance;
+
+    private String photoReference;
+
+
+
+    private byte []photoData;
 
     public Place(String name, LatLng latlng, float rating, String address, OpeningHours openingHours, String id, double distance) {
         this.name = name;
@@ -79,11 +90,29 @@ public class Place {
         return id;
     }
 
+
     public void setId(String id) {
         this.id = id;
     }
 
 
+    public String getPhotoReference() {
+        return photoReference;
+    }
+
+    public void setPhotoReference(String photoReference) {
+        this.photoReference = photoReference;
+    }
+
+
+    public Bitmap getPhotoBitmap() {
+        Bitmap bm = BitmapFactory.decodeByteArray(photoData, 0, photoData.length);
+        return bm;
+    }
+
+    public void setPhotoData(byte[] photoData) {
+        this.photoData = photoData;
+    }
 
 
 }
