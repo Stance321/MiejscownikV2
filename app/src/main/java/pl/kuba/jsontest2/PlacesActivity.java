@@ -189,6 +189,7 @@ public class PlacesActivity extends AppCompatActivity {
                             public void onResult(PlaceDetails result) {
                                 places.get(i).setOpeningHours(result.openingHours);
                                 places.get(i).setPhotoReference(result.photos[1].photoReference);
+
                             }
 
                             @Override
@@ -206,6 +207,7 @@ public class PlacesActivity extends AppCompatActivity {
                             @Override
                             public void onResult(ImageResult result) {
                                 places.get(i).setPhotoData(result.imageData);
+                                System.out.println(result);
                             }
 
                             @Override
@@ -235,8 +237,11 @@ public class PlacesActivity extends AppCompatActivity {
 
                         AlertDialog detailsPopup = dialogBuilder.create();
                         detailsPopup.show();
+                        System.out.println(places.get(i).getPhotoReference());
 
                         placeIconView.setImageBitmap(places.get(i).getPhotoBitmap());
+
+
 
                     }
                 });
@@ -256,6 +261,7 @@ public class PlacesActivity extends AppCompatActivity {
                 for (int i = 0; i < places.size(); i++) {
                     System.out.println("name " + places.get(i).getName() + ", distance " + places.get(i).getDistance());
                 }
+
 
 
             }
