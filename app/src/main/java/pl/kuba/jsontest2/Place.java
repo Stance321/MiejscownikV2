@@ -26,6 +26,8 @@ public class Place {
     private String id;
     private double distance;
 
+    private String openHoursToday;
+
     private String photoReference;
 
 
@@ -112,6 +114,15 @@ public class Place {
 
     public void setPhotoData(byte[] photoData) {
         this.photoData = photoData;
+    }
+
+
+    public String getOpenHoursToday() {
+        return openHoursToday;
+    }
+
+    public void setOpenHoursToday(String openHoursToday) {
+        this.openHoursToday = openHoursToday;
     }
 
 
