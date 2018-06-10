@@ -109,6 +109,7 @@ public class PlacesActivity extends AppCompatActivity {
         sbDistance.setMax(maxDistance);
 //        sbDistance.setMin(100);
         sbDistance.setProgress(3000);
+        tvMeters.setText(sbDistance.getProgress() + " meters");
 
 
 
@@ -118,7 +119,9 @@ public class PlacesActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 System.out.println(i);
                 tvMeters.setText(i + " meters");
-               PlacesAdapter adapter = (PlacesAdapter) mListViewPlaces.getAdapter();
+                mListViewPlaces.setAdapter(new PlacesAdapter(getApplicationContext(), places, sbDistance.getProgress()));
+
+                PlacesAdapter adapter = (PlacesAdapter) mListViewPlaces.getAdapter();
                 adapter.getFilter().filter(String.valueOf(i));
                 refreshLayout();
 
@@ -284,7 +287,6 @@ public class PlacesActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mListViewPlaces.setAdapter(new PlacesAdapter(getApplicationContext(), places, sbDistance.getProgress()));
 
                 mListViewPlaces.invalidate();
             }

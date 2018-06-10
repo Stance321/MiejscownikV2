@@ -24,7 +24,7 @@ import java.util.List;
  * Created by jakub on 25.05.18.
  */
 
-public class PlacesAdapter extends ArrayAdapter implements Filterable {
+public class PlacesAdapter extends BaseAdapter implements Filterable {
 
     private Context context;
     private List<Place> allPlaces;
@@ -36,7 +36,7 @@ public class PlacesAdapter extends ArrayAdapter implements Filterable {
     ViewHolder holder;
 
     public PlacesAdapter(Context context, List<Place> values, int selectedDistance) {
-        super(context, R.layout.rowofplace, values);
+     //   super(context, R.layout.rowofplace, values);
 
         this.context = context;
         this.allPlaces = values;
@@ -50,6 +50,10 @@ public class PlacesAdapter extends ArrayAdapter implements Filterable {
         return filteredPlaces.size();
     }
 
+    @Override
+    public Object getItem(int i) {
+        return filteredPlaces.get(i);
+    }
 
 
     @Override
@@ -59,22 +63,22 @@ public class PlacesAdapter extends ArrayAdapter implements Filterable {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View row = convertView;
+       // View row = convertView;
 
 
-        if (row == null) {
+        if (convertView == null) {
             LayoutInflater inflater =
                     (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.rowofplace, parent, false);
+            convertView = inflater.inflate(R.layout.rowofplace, parent, false);
             holder = new ViewHolder();
 
-            holder.textPlaceName = (TextView) row.findViewById(R.id.rowPlaceName);
-            holder.textPlaceDistance = (TextView) row.findViewById(R.id.rowPlaceDisance);
-        row.setTag(holder);
+            holder.textPlaceName = (TextView) convertView.findViewById(R.id.rowPlaceName);
+            holder.textPlaceDistance = (TextView) convertView.findViewById(R.id.rowPlaceDisance);
+            convertView.setTag(holder);
         }
         else
         {
-            holder = (ViewHolder) row.getTag();
+            holder = (ViewHolder) convertView.getTag();
         }
 
 
@@ -84,7 +88,7 @@ public class PlacesAdapter extends ArrayAdapter implements Filterable {
                 filteredPlaces.get(position)
                 .getDistance()).intValue())
                 + " meters ");
-        return row;
+        return convertView;
     }
 
     public Filter getFilter() {
@@ -125,7 +129,7 @@ public class PlacesAdapter extends ArrayAdapter implements Filterable {
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults results) {
-            filteredPlaces = (List<Place>) results.values;
+            filteredPlaces = (ArrayList<Place>) results.values;
             notifyDataSetChanged();
 
         }
