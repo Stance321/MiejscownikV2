@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.PlacesSearchResult;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +33,7 @@ public class PlacesAdapter extends ArrayAdapter implements Filterable {
     private ItemFilter mFilter = new ItemFilter();
     TextView rowPlaceName;
     TextView rowPlaceDistance;
-
+    ViewHolder holder;
 
     public PlacesAdapter(Context context, List<Place> values, int selectedDistance) {
         super(context, R.layout.rowofplace, values);
@@ -64,15 +66,21 @@ public class PlacesAdapter extends ArrayAdapter implements Filterable {
             LayoutInflater inflater =
                     (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(R.layout.rowofplace, parent, false);
+            holder = new ViewHolder();
 
-            rowPlaceName = (TextView) row.findViewById(R.id.rowPlaceName);
-            rowPlaceDistance = (TextView) row.findViewById(R.id.rowPlaceDisance);
+            holder.textPlaceName = (TextView) row.findViewById(R.id.rowPlaceName);
+            holder.textPlaceDistance = (TextView) row.findViewById(R.id.rowPlaceDisance);
+        row.setTag(holder);
+        }
+        else
+        {
+            holder = (ViewHolder) row.getTag();
         }
 
 
 
-        rowPlaceName.setText(filteredPlaces.get(position).getName());
-        rowPlaceDistance.setText(String.valueOf(new Double(
+        holder.textPlaceName.setText(filteredPlaces.get(position).getName());
+        holder.textPlaceDistance.setText(String.valueOf(new Double(
                 filteredPlaces.get(position)
                 .getDistance()).intValue())
                 + " meters ");
@@ -83,6 +91,10 @@ public class PlacesAdapter extends ArrayAdapter implements Filterable {
         return mFilter;
     }
 
+    static class ViewHolder{
+        TextView textPlaceName;
+        TextView textPlaceDistance;
+    }
 
     private class ItemFilter extends Filter{
 
