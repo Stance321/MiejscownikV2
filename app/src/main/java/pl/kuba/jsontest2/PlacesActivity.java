@@ -1,5 +1,7 @@
 package pl.kuba.jsontest2;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -12,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -19,8 +22,10 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.maps.GeoApiContext;
+import com.google.maps.ImageResult;
 import com.google.maps.NearbySearchRequest;
 import com.google.maps.PendingResult;
+import com.google.maps.PhotoRequest;
 import com.google.maps.PlaceDetailsRequest;
 import com.google.maps.PlacesApi;
 import com.google.maps.errors.ApiException;
@@ -90,6 +95,7 @@ public class PlacesActivity extends AppCompatActivity {
         final TextView openingHoursView = (TextView) alertLayout.findViewById(R.id.OpeningHoursView);
         final TextView isOpenNowView = (TextView) alertLayout.findViewById(R.id.IsOpenNowView);
         final TextView raitingView = (TextView) alertLayout.findViewById(R.id.RaitingView);
+        final ImageView placeIconView = (ImageView) alertLayout.findViewById(R.id.PlaceIconView);
 
          //EditText openingHoursView = (EditText)alertLayout.findViewById(R.id.OpeningHoursView);
 
@@ -137,7 +143,7 @@ public class PlacesActivity extends AppCompatActivity {
         final LatLng currentLocation = new LatLng(51.107885, 17.038538);
 
 
-        PlacesSearchResponse placesResponse;
+        final PlacesSearchResponse placesResponse;
 
 
         NearbySearchRequest nerby = new NearbySearchRequest(geoApiContext);
@@ -150,7 +156,7 @@ public class PlacesActivity extends AppCompatActivity {
 
         nerby.setCallback(new PendingResult.Callback<PlacesSearchResponse>() {
             @Override
-            public void onResult(PlacesSearchResponse result) {
+            public void onResult(final PlacesSearchResponse result) {
                 if (result.results.length > 9) {
                     for (int i = 0; i < result.results.length; i++) {
 
@@ -167,24 +173,22 @@ public class PlacesActivity extends AppCompatActivity {
                                 result.results[i].placeId,
                                 //result.results[i].openingHours.periods,
                                 distanceinMeters));
-
                     }
 
                 }
-
-
 
                 mListViewPlaces.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
 
-                        PlaceDetailsRequest placeDetails = new PlaceDetailsRequest(geoApiContext);
+                        final PlaceDetailsRequest placeDetails = new PlaceDetailsRequest(geoApiContext);
                         placeDetails.placeId(places.get(i).getId());
 
                         placeDetails.setCallback(new PendingResult.Callback<PlaceDetails>() {
                             @Override
                             public void onResult(PlaceDetails result) {
                                 places.get(i).setOpeningHours(result.openingHours);
+                                places.get(i).setPhotoReference(result.photos[1].photoReference);
                             }
 
                             @Override
@@ -193,10 +197,29 @@ public class PlacesActivity extends AppCompatActivity {
                             }
                         });
 
+                        final PhotoRequest photoRequest = new PhotoRequest(geoApiContext);
+                        photoRequest.photoReference(places.get(i).getPhotoReference());
+                        photoRequest.maxHeight(600);
+                        photoRequest.maxWidth(600);
+
+                        photoRequest.setCallback(new PendingResult.Callback<ImageResult>() {
+                            @Override
+                            public void onResult(ImageResult result) {
+                                places.get(i).setPhotoData(result.imageData);
+                            }
+
+                            @Override
+                            public void onFailure(Throwable e) {
+
+                            }
+                        });
+
+
                         dialogBuilder.setView(alertLayout);
 
                         placeNameView.setText(places.get(i).getName());
                         placeAddressView.setText("("+places.get(i).getAddress()+")");
+
                         //openingHoursView.setText(""+places.get(i).getOpeningHours().periods[0]);
                         raitingView.setText("Ocena miejsca: " + places.get(i).getRating()+"/5");
 
@@ -210,9 +233,10 @@ public class PlacesActivity extends AppCompatActivity {
                             isOpenNowView.setText("Obecnie otwarte");
                         }
 
-
                         AlertDialog detailsPopup = dialogBuilder.create();
                         detailsPopup.show();
+
+                        placeIconView.setImageBitmap(places.get(i).getPhotoBitmap());
 
                     }
                 });
@@ -232,7 +256,11 @@ public class PlacesActivity extends AppCompatActivity {
                 for (int i = 0; i < places.size(); i++) {
                     System.out.println("name " + places.get(i).getName() + ", distance " + places.get(i).getDistance());
                 }
+
+
             }
+
+
 
             @Override
             public void onFailure(Throwable e) {
