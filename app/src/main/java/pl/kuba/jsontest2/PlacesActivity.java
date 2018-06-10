@@ -1,53 +1,32 @@
 package pl.kuba.jsontest2;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.NonNull;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.maps.GeoApiContext;
-import com.google.maps.ImageResult;
 import com.google.maps.NearbySearchRequest;
 import com.google.maps.PendingResult;
-import com.google.maps.PhotoRequest;
 import com.google.maps.PlaceDetailsRequest;
-import com.google.maps.PlacesApi;
-import com.google.maps.errors.ApiException;
 import com.google.maps.model.LatLng;
-import com.google.maps.model.PlaceAutocompleteType;
 import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.RankBy;
 
-import org.w3c.dom.Text;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-
-import static com.google.maps.model.PlaceType.RESTAURANT;
 
 public class PlacesActivity extends AppCompatActivity {
 
@@ -125,11 +104,7 @@ public class PlacesActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 System.out.println(i);
-                tvMeters.setText(i + " meters");
-                mListViewPlaces.setAdapter(new PlacesAdapter(getApplicationContext(), places, sbDistance.getProgress()));
 
-                PlacesAdapter adapter = (PlacesAdapter) mListViewPlaces.getAdapter();
-                adapter.getFilter().filter(String.valueOf(i));
                 refreshLayout();
 
             }
@@ -310,8 +285,12 @@ public class PlacesActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                tvMeters.setText(sbDistance.getProgress() + " meters");
+                mListViewPlaces.setAdapter(new PlacesAdapter(getApplicationContext(), places, sbDistance.getProgress()));
+                 PlacesAdapter adapter = (PlacesAdapter) mListViewPlaces.getAdapter();
+                 adapter.getFilter().filter(String.valueOf(sbDistance.getProgress()));
 
-                mListViewPlaces.invalidate();
+                 mListViewPlaces.invalidate();
             }
         });
     }

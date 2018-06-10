@@ -33,7 +33,9 @@
         android:scrollIndicators="none|top"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="148dp" />
 
     <TextView
         android:id="@+id/tvMeters"
@@ -45,19 +47,22 @@
         android:textColor="@android:color/holo_blue_light"
         android:textStyle="normal|bold"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteY="53dp" />
+        tools:layout_editor_absoluteY="53dp"
+        android:gravity="end"
+        android:layout_marginRight="24dp"
+        tools:ignore="MissingConstraints" />
 
     <Switch
         android:id="@+id/switch1"
-        android:layout_width="82dp"
-        android:layout_height="27dp"
+        android:layout_width="96dp"
+        android:layout_height="21dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
         android:checked="false"
-        android:text="Switch"
         android:textOff="Wszystkie"
         android:textOn="Tylko otwarte"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/sbDistance"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
