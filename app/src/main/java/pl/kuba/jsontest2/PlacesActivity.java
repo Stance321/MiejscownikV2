@@ -9,9 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.maps.GeoApiContext;
@@ -44,6 +46,7 @@ public class PlacesActivity extends AppCompatActivity {
     TextView raitingView;
     ImageView placeIconView;
     Boolean isOpenPlace;
+    Switch isOpenSwitch;
 
 
     public static double distance(double lat1, double lat2, double lon1,
@@ -82,6 +85,9 @@ public class PlacesActivity extends AppCompatActivity {
         isOpenNowView = (TextView) alertLayout.findViewById(R.id.IsOpenNowView);
         raitingView = (TextView) alertLayout.findViewById(R.id.RaitingView);
         placeIconView = (ImageView) alertLayout.findViewById(R.id.PlaceIconView);
+        isOpenSwitch = (Switch) findViewById(R.id.isOpenSwitch);
+
+
 
          //EditText openingHoursView = (EditText)alertLayout.findViewById(R.id.OpeningHoursView);
 
@@ -98,6 +104,17 @@ public class PlacesActivity extends AppCompatActivity {
         tvMeters.setText(sbDistance.getProgress() + " meters");
 
 
+        isOpenSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    refreshLayout();
+                }
+                else{
+                    refreshLayout();
+                }
+            }
+        });
 
 
         sbDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -286,7 +303,7 @@ public class PlacesActivity extends AppCompatActivity {
             @Override
             public void run() {
                 tvMeters.setText(sbDistance.getProgress() + " meters");
-                mListViewPlaces.setAdapter(new PlacesAdapter(getApplicationContext(), places, sbDistance.getProgress()));
+                mListViewPlaces.setAdapter(new PlacesAdapter(getApplicationContext(), places, sbDistance.getProgress(), isOpenSwitch.isChecked()));
                  PlacesAdapter adapter = (PlacesAdapter) mListViewPlaces.getAdapter();
                  adapter.getFilter().filter(String.valueOf(sbDistance.getProgress()));
 

@@ -24,18 +24,18 @@
 
     <SeekBar
         android:id="@+id/sbDistance"
-        android:layout_width="218dp"
-        android:layout_height="70dp"
+        android:layout_width="283dp"
+        android:layout_height="60dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginLeft="148dp"
+        android:layout_marginRight="8dp"
         android:layout_marginStart="148dp"
         android:layout_marginTop="4dp"
         android:pointerIcon="context_menu"
         android:scrollIndicators="none|top"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="148dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvMeters"
@@ -53,7 +53,7 @@
         tools:ignore="MissingConstraints" />
 
     <Switch
-        android:id="@+id/switch1"
+        android:id="@+id/isOpenSwitch"
         android:layout_width="96dp"
         android:layout_height="21dp"
         android:layout_marginEnd="8dp"

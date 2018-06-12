@@ -1,21 +1,13 @@
 package pl.kuba.jsontest2;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
-
-import com.google.maps.model.PlacesSearchResponse;
-import com.google.maps.model.PlacesSearchResult;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,13 +26,15 @@ public class PlacesAdapter extends BaseAdapter implements Filterable {
     TextView rowPlaceName;
     TextView rowPlaceDistance;
     ViewHolder holder;
+    boolean Opened;
 
-    public PlacesAdapter(Context context, List<Place> values, int selectedDistance) {
+    public PlacesAdapter(Context context, List<Place> values, int selectedDistance, boolean Opened) {
      //   super(context, R.layout.rowofplace, values);
 
         this.context = context;
         this.allPlaces = values;
         this.filteredPlaces = values;
+        this.Opened = Opened;
 
         this.selectedDistance = selectedDistance;
     }
@@ -88,6 +82,14 @@ public class PlacesAdapter extends BaseAdapter implements Filterable {
                 filteredPlaces.get(position)
                 .getDistance()).intValue())
                 + " meters ");
+        if(filteredPlaces.get(position).getOpeningHours().openNow){
+            holder.textOpened.setText("Otwarte");
+        }
+        else
+            {
+                holder.textOpened.setText("Zamkniete");
+            }
+
         return convertView;
     }
 
@@ -98,6 +100,7 @@ public class PlacesAdapter extends BaseAdapter implements Filterable {
     static class ViewHolder{
         TextView textPlaceName;
         TextView textPlaceDistance;
+        TextView textOpened;
     }
 
     private class ItemFilter extends Filter{
@@ -115,7 +118,7 @@ public class PlacesAdapter extends BaseAdapter implements Filterable {
 
 
             for(int i =0; i<count; i++){
-                if (listofPlaces.get(i).getDistance() <= selectedDistance) {
+                if (listofPlaces.get(i).getDistance() <= selectedDistance && listofPlaces.get(i).getOpeningHours().openNow == Opened) {
                     nList.add(listofPlaces.get(i));
                     System.out.println(listofPlaces.get(i).getDistance() + " SELECTED DISTANCE " + selectedDistance);
 
