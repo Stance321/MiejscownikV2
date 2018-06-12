@@ -102,6 +102,7 @@ public class PlacesActivity extends AppCompatActivity {
 //        sbDistance.setMin(100);
         sbDistance.setProgress(3000);
         tvMeters.setText(sbDistance.getProgress() + " meters");
+        isOpenSwitch.setChecked(false);
 
 
         isOpenSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -111,7 +112,7 @@ public class PlacesActivity extends AppCompatActivity {
                     refreshLayout();
                 }
                 else{
-                    refreshLayout();
+                   refreshLayout();
                 }
             }
         });
@@ -158,23 +159,23 @@ public class PlacesActivity extends AppCompatActivity {
         nerby.setCallback(new PendingResult.Callback<PlacesSearchResponse>() {
             @Override
             public void onResult(final PlacesSearchResponse result) {
-                if (result.results.length > 9) {
+
                     for (int i = 0; i < result.results.length; i++) {
 
                         double distanceinMeters = distance(result.results[i].geometry.location.lat,
                                 currentLocation.lat,
                                 result.results[i].geometry.location.lng,
                                 currentLocation.lng);
-
+                        System.out.println(result.results[i].name);
                         places.add(new Place(result.results[i].name,
                                 result.results[i].geometry.location,
                                 result.results[i].rating,
                                 result.results[i].vicinity,
                                 result.results[i].openingHours,
                                 result.results[i].placeId,
+
                                 //result.results[i].openingHours.periods,
                                 distanceinMeters));
-                    }
 
                 }
 
@@ -190,11 +191,7 @@ public class PlacesActivity extends AppCompatActivity {
                     }
                 });
 
-                System.out.println(places.get(1).getName());
                 refreshLayout();
-                for (int i = 0; i < places.size(); i++) {
-                    System.out.println("name " + places.get(i).getName() + ", distance " + places.get(i).getDistance());
-                }
 
 
 

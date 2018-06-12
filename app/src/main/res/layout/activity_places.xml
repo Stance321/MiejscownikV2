@@ -6,35 +6,16 @@
     android:layout_height="match_parent"
     tools:context="pl.kuba.jsontest2.PlacesActivity">
 
-    <ListView
-        android:id="@+id/listViewPlaces"
-        android:layout_width="0dp"
-        android:layout_height="347dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sbDistance"
-        tools:ignore="UnknownId">
-
-    </ListView>
-
     <SeekBar
         android:id="@+id/sbDistance"
-        android:layout_width="283dp"
-        android:layout_height="60dp"
+        android:layout_width="134dp"
+        android:layout_height="27dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginLeft="148dp"
         android:layout_marginRight="8dp"
-        android:layout_marginStart="148dp"
         android:layout_marginTop="4dp"
         android:pointerIcon="context_menu"
         android:scrollIndicators="none|top"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -42,29 +23,57 @@
         android:layout_width="114dp"
         android:layout_height="21dp"
         android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:gravity="end"
         android:text="meters"
         android:textAlignment="textEnd"
         android:textColor="@android:color/holo_blue_light"
         android:textStyle="normal|bold"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteY="53dp"
-        android:gravity="end"
-        android:layout_marginRight="24dp"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteY="53dp" />
 
     <Switch
         android:id="@+id/isOpenSwitch"
         android:layout_width="96dp"
         android:layout_height="21dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
         android:checked="false"
         android:textOff="Wszystkie"
         android:textOn="Tylko otwarte"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/sbDistance"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:checked="false" />
+        tools:checked="false"
+        android:layout_marginLeft="8dp" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="98dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/sbDistance"
+        app:layout_constraintHorizontal_bias="0.666"
+        app:layout_constraintStart_toEndOf="@+id/isOpenSwitch"
+        tools:layout_editor_absoluteY="12dp"
+        tools:ignore="MissingConstraints" />
+
+    <ListView
+        android:id="@+id/listViewPlaces"
+        android:layout_width="0dp"
+        android:layout_height="347dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sbDistance"
+        tools:ignore="UnknownId">
+
+    </ListView>
 </android.support.constraint.ConstraintLayout>

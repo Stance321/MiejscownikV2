@@ -1,6 +1,7 @@
 package pl.kuba.jsontest2;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,6 +68,7 @@ public class PlacesAdapter extends BaseAdapter implements Filterable {
             holder = new ViewHolder();
 
             holder.textPlaceName = (TextView) convertView.findViewById(R.id.rowPlaceName);
+           holder.textOpened = (TextView) convertView.findViewById(R.id.rowOpen);
             holder.textPlaceDistance = (TextView) convertView.findViewById(R.id.rowPlaceDisance);
             convertView.setTag(holder);
         }
@@ -82,14 +84,27 @@ public class PlacesAdapter extends BaseAdapter implements Filterable {
                 filteredPlaces.get(position)
                 .getDistance()).intValue())
                 + " meters ");
-        if(filteredPlaces.get(position).getOpeningHours().openNow){
-            holder.textOpened.setText("Otwarte");
-        }
-        else
+
+
+
+        if(filteredPlaces.get(position).getOpeningHours() != null) {
+            if (filteredPlaces.get(position).getOpeningHours().openNow)
             {
+                holder.textOpened.setTextColor(Color.GREEN);
+                holder.textOpened.setText("Otwarte");
+
+            }
+            else
+                {
+                    holder.textOpened.setTextColor(Color.RED);
                 holder.textOpened.setText("Zamkniete");
             }
-
+        }
+        else
+        {
+            holder.textOpened.setTextColor(Color.BLUE);
+            holder.textOpened.setText("Brak informacji");
+        }
         return convertView;
     }
 
@@ -116,12 +131,31 @@ public class PlacesAdapter extends BaseAdapter implements Filterable {
 
             final ArrayList<Place> nList = new ArrayList<Place>(count);
 
-
+            boolean getErroredwithOpenningHours = false;
             for(int i =0; i<count; i++){
-                if (listofPlaces.get(i).getDistance() <= selectedDistance && listofPlaces.get(i).getOpeningHours().openNow == Opened) {
+                if(listofPlaces.get(i).getOpeningHours() == null){
+                    System.out.println("null");
+                    getErroredwithOpenningHours = true;
+                }else
+                {
+                    System.out.println("not null");
+                    getErroredwithOpenningHours = false;
+                }
+
+                if(getErroredwithOpenningHours == true){
+                if (listofPlaces.get(i).getDistance() <= selectedDistance) {
                     nList.add(listofPlaces.get(i));
                     System.out.println(listofPlaces.get(i).getDistance() + " SELECTED DISTANCE " + selectedDistance);
 
+                }
+                }
+                else
+                {
+                    if (listofPlaces.get(i).getDistance() <= selectedDistance && listofPlaces.get(i).getOpeningHours().openNow == Opened) {
+                        nList.add(listofPlaces.get(i));
+                        System.out.println(listofPlaces.get(i).getDistance() + " SELECTED DISTANCE " + selectedDistance);
+
+                    }
                 }
             }
             results.values = nList;
