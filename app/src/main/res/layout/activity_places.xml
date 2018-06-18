@@ -37,19 +37,19 @@
         android:id="@+id/isOpenSwitch"
         android:layout_width="96dp"
         android:layout_height="21dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:checked="false"
         android:textOff="Wszystkie"
         android:textOn="Tylko otwarte"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:checked="false"
-        android:layout_marginLeft="8dp" />
+        tools:checked="false" />
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/sTypesOfPlaces"
         android:layout_width="98dp"
         android:layout_height="35dp"
         android:layout_marginEnd="8dp"
@@ -59,16 +59,19 @@
         app:layout_constraintEnd_toStartOf="@+id/sbDistance"
         app:layout_constraintHorizontal_bias="0.666"
         app:layout_constraintStart_toEndOf="@+id/isOpenSwitch"
-        tools:layout_editor_absoluteY="12dp"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteY="12dp" />
 
     <ListView
         android:id="@+id/listViewPlaces"
         android:layout_width="0dp"
         android:layout_height="347dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
         android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

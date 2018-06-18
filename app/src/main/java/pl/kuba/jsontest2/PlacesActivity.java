@@ -1,9 +1,15 @@
 package pl.kuba.jsontest2;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -13,6 +19,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -47,24 +54,8 @@ public class PlacesActivity extends AppCompatActivity {
     ImageView placeIconView;
     Boolean isOpenPlace;
     Switch isOpenSwitch;
+    Spinner sTypesofPlaces;
 
-
-    public static double distance(double lat1, double lat2, double lon1,
-                                  double lon2) {
-
-        final int R = 6371; // Radius of the earth
-
-        double latDistance = Math.toRadians(lat2 - lat1);
-        double lonDistance = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
-
-
-        return distance;
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -86,13 +77,13 @@ public class PlacesActivity extends AppCompatActivity {
         raitingView = (TextView) alertLayout.findViewById(R.id.RaitingView);
         placeIconView = (ImageView) alertLayout.findViewById(R.id.PlaceIconView);
         isOpenSwitch = (Switch) findViewById(R.id.isOpenSwitch);
+        sTypesofPlaces = (Spinner) findViewById(R.id.sTypesOfPlaces);
 
 
+        //EditText openingHoursView = (EditText)alertLayout.findViewById(R.id.OpeningHoursView);
 
-         //EditText openingHoursView = (EditText)alertLayout.findViewById(R.id.OpeningHoursView);
 
-
-        isOpenPlace =false;
+        isOpenPlace = false;
 
 
         dialogBuilder = new AlertDialog.Builder(this);
@@ -108,11 +99,10 @@ public class PlacesActivity extends AppCompatActivity {
         isOpenSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
+                if (b) {
                     refreshLayout();
-                }
-                else{
-                   refreshLayout();
+                } else {
+                    refreshLayout();
                 }
             }
         });
@@ -139,12 +129,25 @@ public class PlacesActivity extends AppCompatActivity {
         });
 
         places = new ArrayList<Place>();
+
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
         geoApiContext = new GeoApiContext.Builder()
                 .apiKey("AIzaSyBAq6om8Nx7HL_DXFHWCE572HgSWIg3giU")
                 .build();
 
-        final LatLng currentLocation = new LatLng(51.107885, 17.038538);
-
+        final LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
 
 
@@ -294,6 +297,22 @@ public class PlacesActivity extends AppCompatActivity {
 
     }
 
+    public static double distance(double lat1, double lat2, double lon1,
+                                  double lon2) {
+
+        final int R = 6371; // Radius of the earth
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+
+
+        return distance;
+    }
 
     public void refreshLayout() {
         runOnUiThread(new Runnable() {

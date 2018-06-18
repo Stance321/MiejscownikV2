@@ -1,6 +1,18 @@
 <resources>
-    <string name="app_name">JSONtest2</string>
+    <string name="app_name">Miejscownik</string>
     <string name="title_activity_places">PlacesActivity</string>
     <string name="zamkniete" color= "@android:color/holo_red_dark">zamknięte</string>
     <string name="otwarte" color= "@android:color/holo_green_light">otwarte</string>
+
+
+<string-array name="typesofPlaces">
+    <item>Restauracje</item>
+    <item>Kina</item>
+    <item>Apteki</item>
+    <item>Banki i bankomaty</item>
+    <item>Rozrywka</item>
+    <item>Stacje paliw</item>
+    dupaaaa
+</string-array>
+
 </resources>
