@@ -1,18 +1,19 @@
 <resources>
     <string name="app_name">Miejscownik</string>
     <string name="title_activity_places">PlacesActivity</string>
-    <string name="zamkniete" color= "@android:color/holo_red_dark">zamknięte</string>
-    <string name="otwarte" color= "@android:color/holo_green_light">otwarte</string>
+    <string name="zamkniete" color="@android:color/holo_red_dark">zamknięte</string>
+    <string name="otwarte" color="@android:color/holo_green_light">otwarte</string>
 
 
-<string-array name="typesofPlaces">
-    <item>Restauracje</item>
-    <item>Kina</item>
-    <item>Apteki</item>
-    <item>Banki i bankomaty</item>
-    <item>Rozrywka</item>
-    <item>Stacje paliw</item>
-    dupaaaa
-</string-array>
+    <string-array name="typesofPlaces">
+        <item>RESTAURANT</item>
+        <item>BANK</item>
+        <item>HOSPITAL</item>
+        <item>ZOO</item>
+        <item>SUPERMARKET</item>
+        <item>GAS_STATION</item>
+        dupaaaa
+    </string-array>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

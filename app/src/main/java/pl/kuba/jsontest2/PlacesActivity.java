@@ -2,6 +2,7 @@ package pl.kuba.jsontest2;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -15,11 +16,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -32,6 +33,8 @@ import com.google.maps.model.PlaceDetails;
 import com.google.maps.model.PlaceType;
 import com.google.maps.model.PlacesSearchResponse;
 import com.google.maps.model.RankBy;
+
+import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,8 +57,24 @@ public class PlacesActivity extends AppCompatActivity {
     ImageView placeIconView;
     Boolean isOpenPlace;
     Switch isOpenSwitch;
-    Spinner sTypesofPlaces;
+    Button openTheMap;
 
+    public static double distance(double lat1, double lat2, double lon1,
+                                  double lon2) {
+
+        final int R = 6371; // Radius of the earth
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+
+
+        return distance;
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -77,8 +96,7 @@ public class PlacesActivity extends AppCompatActivity {
         raitingView = (TextView) alertLayout.findViewById(R.id.RaitingView);
         placeIconView = (ImageView) alertLayout.findViewById(R.id.PlaceIconView);
         isOpenSwitch = (Switch) findViewById(R.id.isOpenSwitch);
-        sTypesofPlaces = (Spinner) findViewById(R.id.sTypesOfPlaces);
-
+        openTheMap = (Button) alertLayout.findViewById(R.id.btShowonThemap);
 
         //EditText openingHoursView = (EditText)alertLayout.findViewById(R.id.OpeningHoursView);
 
@@ -107,12 +125,7 @@ public class PlacesActivity extends AppCompatActivity {
             }
         });
 
-        sTypesofPlaces.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                
-            }
-        });
+
         sbDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -134,26 +147,55 @@ public class PlacesActivity extends AppCompatActivity {
         });
 
         places = new ArrayList<Place>();
-
-        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
         geoApiContext = new GeoApiContext.Builder()
                 .apiKey("AIzaSyBAq6om8Nx7HL_DXFHWCE572HgSWIg3giU")
                 .build();
 
-        final LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
 
+        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        Location net_loc = null, gps_loc = null, finalLoc = null;
+
+        if (gps_enabled)
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }gps_loc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (network_enabled)
+            net_loc = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        if (gps_loc != null && net_loc != null) {
+
+            //smaller the number more accurate result will
+            if (gps_loc.getAccuracy() > net_loc.getAccuracy())
+                finalLoc = net_loc;
+            else
+                finalLoc = gps_loc;
+
+            // I used this just to get an idea (if both avail, its upto you which you want to take as I've taken location with more accuracy)
+
+        } else {
+
+            if (gps_loc != null) {
+                finalLoc = gps_loc;
+            } else if (net_loc != null) {
+                finalLoc = net_loc;
+            }
+        }
+        System.out.println(finalLoc.getLongitude());
+        System.out.println(finalLoc.getLatitude());
+            final LatLng currentLocation = new LatLng(finalLoc.getLatitude(), finalLoc.getLongitude());
 
 
         NearbySearchRequest nerby = new NearbySearchRequest(geoApiContext);
@@ -220,16 +262,39 @@ public class PlacesActivity extends AppCompatActivity {
 
                 PlaceDetailsRequest placeDetails = new PlaceDetailsRequest(geoApiContext);
                 placeDetails.placeId(places.get(i).getId());
+                System.out.println(places.get(i).getId());
 
                 placeDetails.setCallback(new PendingResult.Callback<PlaceDetails>() {
                     @Override
                     public void onResult(PlaceDetails result) {
                         places.get(i).setOpeningHours(result.openingHours);
-                        places.get(i).setPhotoReference(result.photos[0].photoReference);
+                        places.get(i).setLatlng(result.geometry.location);
 
+                        openTheMap.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Bundle extras = new Bundle();
+                                extras.putDouble("lat", places.get(i).getLatlng().lat);
+                                extras.putDouble("lng", places.get(i).getLatlng().lng);
+                                extras.putString("placeName", places.get(i).getName());
+                                extras.putDouble("currentLat", currentLocation.lat);
+                                extras.putDouble("currentLng", currentLocation.lng);
+
+                                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                                intent.putExtras(extras);
+                                startActivity(intent);
+                            }
+                        });
+
+
+                        places.get(i).setOpenHoursToday(result.openingHours.weekdayText[new LocalDate().getDayOfWeek()-1]);
+
+
+
+                        refreshPopupLayout(i);
                         refreshAlertLayout(places.get(i).getOpeningHours().openNow);
 
-                        places.get(i).setOpenHoursToday(result.openingHours.weekdayText[0]);
+
 
                                 /*
 
@@ -261,16 +326,11 @@ public class PlacesActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Throwable e) {
-                        System.out.println("asdasdasd");
+                        System.out.println("onFailure_2");
                         System.out.println(e.toString());
 
                     }
                 });
-
-
-
-
-
 
 
                 placeNameView.setText(places.get(i).getName());
@@ -279,7 +339,6 @@ public class PlacesActivity extends AppCompatActivity {
                 //openingHoursView.setText(""+places.get(i).getOpeningHours().periods[0]);
                 raitingView.setText("Ocena miejsca: " + places.get(i).getRating()+"/5");
 
-                openingHoursView.setText(places.get(i).getOpenHoursToday());
 
 
 
@@ -287,8 +346,16 @@ public class PlacesActivity extends AppCompatActivity {
 
 
                 AlertDialog detailsPopup = dialogBuilder.create();
-                detailsPopup.show();
-                //System.out.println(places.get(i).getPhotoReference());
+
+                if(detailsPopup.isShowing()){
+
+                    detailsPopup.cancel();
+                    detailsPopup.show();
+                }
+                else {
+                    detailsPopup.show();
+                }
+
 
 
 
@@ -296,28 +363,11 @@ public class PlacesActivity extends AppCompatActivity {
 
             }
         });
-
         //Gson lokalizacje = new GsonBuilder().setPrettyPrinting().create();
 
 
     }
 
-    public static double distance(double lat1, double lat2, double lon1,
-                                  double lon2) {
-
-        final int R = 6371; // Radius of the earth
-
-        double latDistance = Math.toRadians(lat2 - lat1);
-        double lonDistance = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
-
-
-        return distance;
-    }
 
     public void refreshLayout() {
         runOnUiThread(new Runnable() {
@@ -355,6 +405,18 @@ public class PlacesActivity extends AppCompatActivity {
 
                 isOpenNowView.invalidate();
                 System.out.println("refresh");
+
+            }
+        });
+
+    }
+    public void refreshPopupLayout(final int i){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                openingHoursView.setText(places.get(i).getOpenHoursToday());
+                openingHoursView.invalidate();
 
             }
         });
